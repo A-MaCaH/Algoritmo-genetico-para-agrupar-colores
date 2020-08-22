@@ -6,11 +6,13 @@ import math
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
-generaciones=1000#1000
-num_ind_poblacion=100#100
-longitud_Cromosoma=8 #(8*8)
-ProbCruza=0.075 #0.075
-probMuta=0.2#0.2
+                                #mejores valores encontrados
+generaciones=1                  #1000
+num_ind_poblacion=3             #100
+longitud_Cromosoma=8            #(8*8)
+ProbCruza=0.075                 #0.075
+probMuta=0.2                    #0.2
+
 poblacion=np.zeros((num_ind_poblacion,longitud_Cromosoma,longitud_Cromosoma),np.uint8)
 poblacionConFitness=np.zeros((num_ind_poblacion,longitud_Cromosoma,longitud_Cromosoma,2),np.uint8)
 soloFitness=np.zeros((num_ind_poblacion,longitud_Cromosoma,longitud_Cromosoma),np.uint8)
@@ -22,10 +24,13 @@ d_azul=np.zeros((3),np.uint8)
 d_verde=np.zeros((3),np.uint8)
 d_amarillo=np.zeros((3),np.uint8)
 d_rojo=np.zeros((3),np.uint8)
+
+#Codificación para los colores
 C_azul=3
 C_verde=2
 C_amarillo=1
 C_rojo=0
+#valores de los colores en RGB
 d_azul=[0,118,193]
 d_verde=[41,193,35]
 d_amarillo=[180,255,255]
@@ -33,6 +38,7 @@ d_rojo=[255,100,18]
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
+
 def decodificar(img_mejor,nombreImg):
     for i in range(8):
         for j in range(8):
@@ -45,12 +51,14 @@ def decodificar(img_mejor,nombreImg):
             if img_mejor[i][j]==3:
                 img[i][j]=d_azul
     cv2.imwrite(nombreImg,img)
+
 def generarPobInicial():
     for individuo in range(num_ind_poblacion):
         cromosoma=generarIndividuo()
         poblacion[individuo]=cromosoma
+
 def generarIndividuo():
-    #17 rojos, 18 azules,  13 verdes y 16 amarillos
+    #numero de pixeles por color 17 rojos, 18 azules,  13 verdes y 16 amarillos
     #rojo->0 (17)
     #amarillo->1 (16)
     #verdes->2 (13)
@@ -67,6 +75,7 @@ def generarIndividuo():
             cromosoma[x,y] = random.choice(lsDePosiblesGenes) 
             lsDePosiblesGenes.remove(cromosoma[x,y])
     return cromosoma
+
 def fitness():
     individuoConfit.clear()
     for individuo in range(num_ind_poblacion):
@@ -76,44 +85,70 @@ def fitness():
                 fit=0
                 if  (i-1)>=0 and (j-1)>=0 and poblacion[individuo][i][j] != poblacion[individuo][i-1][j-1]:
                     fit=fit+1
-
                 if (i-1)>=0 and poblacion[individuo][i][j] != poblacion[individuo][i-1][j]:
                     fit=fit+1
-
                 if (i-1)>=0 and (j+1)<8 and poblacion[individuo][i][j] != poblacion[individuo][i-1][j+1]:
                     fit=fit+1
-                    
                 if (j-1)>=0 and poblacion[individuo][i][j] != poblacion[individuo][i][j-1]:
                     fit=fit+1
-
                 if (j+1)<8 and poblacion[individuo][i][j] != poblacion[individuo][i][j+1]:
                     fit=fit+1
-
                 if (i+1)<8 and (j-1)>=0 and poblacion[individuo][i][j] != poblacion[individuo][i+1][j-1]:
                     fit=fit+1
-
                 if (i+1)<8 and poblacion[individuo][i][j] != poblacion[individuo][i+1][j]:
                     fit=fit+1
-
                 if (i+1)<8 and (j+1)<8 and poblacion[individuo][i][j] != poblacion[individuo][i+1][j+1]:
                     fit=fit+1
                 fitnessDelIndv=fitnessDelIndv+fit
         individuoConfit.append([poblacion[individuo],fitnessDelIndv])
+
 def bubbleSort(lista):
     n = len(lista)
     for i in range(1, n):
         for j in range(n-i):
             if lista[j][1] > lista[j+1][1]:
-                
                 aux=lista[j]
                 lista[j]=lista[j+1]
                 lista[j+1]=aux
     return lista
 
+def mergeSort_(arr): 
+    if len(arr) >1: 
+        mid = len(arr)//2 # Finding the mid of the array 
+        L = arr[:mid] # Dividing the array elements  
+        R = arr[mid:] # into 2 halves 
+  
+        mergeSort_(L) # Sorting the first half 
+        mergeSort_(R) # Sorting the second half 
+  
+        i = j = k = 0
+          
+        # Copy data to temp arrays L[] and R[] 
+        while i < len(L) and j < len(R): 
+            if L[i][1] < R[j][1]: 
+                arr[k] = L[i] 
+                i+= 1
+            else: 
+                arr[k] = R[j] 
+                j+= 1
+            k+= 1
+          
+        # Checking if any element was left 
+        while i < len(L): 
+            arr[k] = L[i] 
+            i+= 1
+            k+= 1
+          
+        while j < len(R): 
+            arr[k] = R[j] 
+            j+= 1
+            k+= 1 
+    return arr
+
 def seleccion():
     listadelosmejores10por.clear()
     listaDeLospadreSigGen.clear()
-    ordenadoPorMejor=bubbleSort(individuoConfit)
+    ordenadoPorMejor=mergeSort_(individuoConfit)
     for i in range(math.floor(num_ind_poblacion*.1)):
         listadelosmejores10por.append(ordenadoPorMejor[i])
     for i in range(2):
@@ -182,13 +217,11 @@ def generarNuevaPob(listaLegado,listamejores):
                 k=0
             k=k+1
 
-
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 def algoGen():
-    generarPobInicial()
-   
+    generarPobInicial()   
     for i in range(generaciones):  
         fitness()
         if i==0:
@@ -197,7 +230,8 @@ def algoGen():
         if i==1:
             decodificar(individuoConfit[0][0],"mejorIndivSegPobAlgoDif3.png")
             file_w.write("\n---el mejor es de la poblacion---"+str(i)+"\n"+str(individuoConfit[0][0])+"\n Con un fitness de(heuristica): "+str(individuoConfit[0][1]))
-        print("\n---el mejor es de la poblacion---",i,"\n",individuoConfit[0][0],"\n Con un fitness de(heuristica): ", individuoConfit[0][1])
+        
+        #print("\n---el mejor es de la poblacion---",i,"\n",individuoConfit[0][0],"\n Con un fitness de(heuristica): ", individuoConfit[0][1])
         seleccion()
         recvCruza=cruza(listaDeLospadreSigGen)
         recvMutacion=mutacion(recvCruza)
@@ -215,6 +249,6 @@ file_w.write("\n---el mejor es---\n")
 file_w.write(str(individuoConfit[0][0]))
 file_w.write("\n Con un fitness de(heuristica): ")
 file_w.write(str(individuoConfit[0][1]))
-print("\n---el mejor es---\n",individuoConfit[0][0],"\n Con un fitness de(heuristica): ", individuoConfit[0][1])
+#print("\n---el mejor es---\n",individuoConfit[0][0],"\n Con un fitness de(heuristica): ", individuoConfit[0][1])
 file_w.close()
 decodificar(individuoConfit[0][0],"mejorIndivAlgoDif3.png")
