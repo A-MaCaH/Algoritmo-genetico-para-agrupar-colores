@@ -1,0 +1,2 @@
+Para este proyecto utilizamos la version de python 3.8.5 en 64 bits, 
+con las bibliotecas random, numpy, re, cv2, math y tqdm
