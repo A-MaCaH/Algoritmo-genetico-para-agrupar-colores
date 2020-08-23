@@ -227,18 +227,17 @@ def generarNuevaPob_(listaLegado,listamejores):
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 from tqdm import tqdm
-listaDeTodosLosMejoresFitness=[]
 def algoGen():
-    loop = tqdm(total=generaciones, position=0, leave=False)
+    loop = tqdm(total=generaciones, position=0, leave=False, unit=" Generaciones")
     generarPobInicial()   
     for i in range(generaciones):  
         fitness()
         if i==0:
             decodificar(individuoConfit[0][0],"mejorIndivpriPobAlgoDif3.png")
-            file_w.write("\n---el mejor es de la poblacion---"+str(i)+"\n"+str(individuoConfit[0][0])+"\n Con un fitness de(heuristica): "+str(individuoConfit[0][1]))
+            #file_w.write("\n---el mejor es de la poblacion---"+str(i)+"\n"+str(individuoConfit[0][0])+"\n Con un fitness de(heuristica): "+str(individuoConfit[0][1]))
         if i==1:
             decodificar(individuoConfit[0][0],"mejorIndivSegPobAlgoDif3.png")
-            file_w.write("\n---el mejor es de la poblacion---"+str(i)+"\n"+str(individuoConfit[0][0])+"\n Con un fitness de(heuristica): "+str(individuoConfit[0][1]))
+            #file_w.write("\n---el mejor es de la poblacion---"+str(i)+"\n"+str(individuoConfit[0][0])+"\n Con un fitness de(heuristica): "+str(individuoConfit[0][1]))
         
         #print("\n---el mejor es de la poblacion---",i,"\n",individuoConfit[0][0],"\n Con un fitness de(heuristica): ", individuoConfit[0][1])
         listadelosmejores10por,listaDeLospadreSigGen = seleccion(individuoConfit)
@@ -248,23 +247,11 @@ def algoGen():
         if individuoConfit[0][1]<115:
             print("salí en: ",i,"\n")
             break
-        listaDeTodosLosMejoresFitness.append(str(individuoConfit[0][1]))
-        loop.set_description("Generaciones: ".format(i))
+        loop.set_description("Gen Actual/Gen Total ".format(i))
         loop.update(1)
     loop.close()
-    print(listaDeTodosLosMejoresFitness)
 #-----------------------------------------------------------------------
 # -----------------------------
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 
-file_w=open("algoGenAlgoDif3.txt","w")
-
-algoGen()
-file_w.write("\n---el mejor es---\n")
-file_w.write(str(individuoConfit[0][0]))
-file_w.write("\n Con un fitness de(heuristica): ")
-file_w.write(str(individuoConfit[0][1]))
-#print("\n---el mejor es---\n",individuoConfit[0][0],"\n Con un fitness de(heuristica): ", individuoConfit[0][1])
-file_w.close()
-decodificar(individuoConfit[0][0],"mejorIndivAlgoDif3.png")
