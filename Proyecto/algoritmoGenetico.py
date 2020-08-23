@@ -117,12 +117,9 @@ def mergeSort_(arr):
         mid = len(arr)//2 # Finding the mid of the array 
         L = arr[:mid] # Dividing the array elements  
         R = arr[mid:] # into 2 halves 
-  
         mergeSort_(L) # Sorting the first half 
         mergeSort_(R) # Sorting the second half 
-  
         i = j = k = 0
-          
         # Copy data to temp arrays L[] and R[] 
         while i < len(L) and j < len(R): 
             if L[i][1] < R[j][1]: 
@@ -132,13 +129,11 @@ def mergeSort_(arr):
                 arr[k] = R[j] 
                 j+= 1
             k+= 1
-          
         # Checking if any element was left 
         while i < len(L): 
             arr[k] = L[i] 
             i+= 1
-            k+= 1
-          
+            k+= 1 
         while j < len(R): 
             arr[k] = R[j] 
             j+= 1
@@ -232,14 +227,6 @@ def algoGen():
     generarPobInicial()   
     for i in range(generaciones):  
         fitness()
-        if i==0:
-            decodificar(individuoConfit[0][0],"mejorIndivpriPobAlgoDif3.png")
-            #file_w.write("\n---el mejor es de la poblacion---"+str(i)+"\n"+str(individuoConfit[0][0])+"\n Con un fitness de(heuristica): "+str(individuoConfit[0][1]))
-        if i==1:
-            decodificar(individuoConfit[0][0],"mejorIndivSegPobAlgoDif3.png")
-            #file_w.write("\n---el mejor es de la poblacion---"+str(i)+"\n"+str(individuoConfit[0][0])+"\n Con un fitness de(heuristica): "+str(individuoConfit[0][1]))
-        
-        #print("\n---el mejor es de la poblacion---",i,"\n",individuoConfit[0][0],"\n Con un fitness de(heuristica): ", individuoConfit[0][1])
         listadelosmejores10por,listaDeLospadreSigGen = seleccion(individuoConfit)
         recvCruza=cruza(listaDeLospadreSigGen)
         recvMutacion=mutacion(recvCruza)
@@ -250,8 +237,3 @@ def algoGen():
         loop.set_description("Gen Actual/Gen Total ".format(i))
         loop.update(1)
     loop.close()
-#-----------------------------------------------------------------------
-# -----------------------------
-#----------------------------------------------------------------------------------------------------
-#----------------------------------------------------------------------------------------------------
-
