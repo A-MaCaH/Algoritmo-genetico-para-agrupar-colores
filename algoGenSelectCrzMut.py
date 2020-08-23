@@ -7,7 +7,7 @@ import math
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
                                 #mejores valores encontrados
-generaciones=1000               #1000
+generaciones=100               #1000
 num_ind_poblacion=100           #100
 longitud_Cromosoma=8            #(8*8)
 ProbCruza=0.075                 #0.075
@@ -145,14 +145,10 @@ def mergeSort_(arr):
             k+= 1 
     return arr
 
-def seleccion():
-    listadelosmejores10por.clear()
-    listaDeLospadreSigGen.clear()
-    ordenadoPorMejor=mergeSort_(individuoConfit)
-    for i in range(math.floor(num_ind_poblacion*.1)):
-        listadelosmejores10por.append(ordenadoPorMejor[i])
-    for i in range(2):
-        listaDeLospadreSigGen.append(ordenadoPorMejor[i])
+def seleccion(fit):
+    ordenadoPorMejor=mergeSort_(fit)
+    return ordenadoPorMejor[:int(num_ind_poblacion*.1)], ordenadoPorMejor[:2]
+
 def cruza(listaPadres):#lista de papas, se van a manejar solo los 2 
     #individuos apartir de aqui hasta la gen de nueva poblacion
     numeroAleatoreo=random.random()
@@ -209,18 +205,29 @@ def generarNuevaPob(listaLegado,listamejores):
             poblacion[individuo]=listamejores[i][0]
             i=i+1
         else:
-            seleccion()
+            listadelosmejores10por,listaDeLospadreSigGen= seleccion(individuoConfit)
             recvCruza=cruza(listaDeLospadreSigGen)
             cromosoma=mutacion(recvCruza)
             poblacion[individuo]=cromosoma[k][0]
             if k==1:
                 k=0
             k=k+1
-
+def generarNuevaPob_(listaLegado,listamejores):
+    i=0
+    for individuo in range(num_ind_poblacion):
+        if individuo<=1:
+            poblacion[individuo]=listaLegado[individuo][0]
+        elif individuo>=2 and individuo<=1+(math.floor(num_ind_poblacion*.1)) and (math.floor(num_ind_poblacion*.1))>0 :
+            poblacion[individuo]=listamejores[i][0]
+            i=i+1
+        else:
+            cromosoma=generarIndividuo()
+            poblacion[individuo]=cromosoma
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 from tqdm import tqdm
+listaDeTodosLosMejoresFitness=[]
 def algoGen():
     loop = tqdm(total=generaciones, position=0, leave=False)
     generarPobInicial()   
@@ -234,17 +241,20 @@ def algoGen():
             file_w.write("\n---el mejor es de la poblacion---"+str(i)+"\n"+str(individuoConfit[0][0])+"\n Con un fitness de(heuristica): "+str(individuoConfit[0][1]))
         
         #print("\n---el mejor es de la poblacion---",i,"\n",individuoConfit[0][0],"\n Con un fitness de(heuristica): ", individuoConfit[0][1])
-        seleccion()
+        listadelosmejores10por,listaDeLospadreSigGen = seleccion(individuoConfit)
         recvCruza=cruza(listaDeLospadreSigGen)
         recvMutacion=mutacion(recvCruza)
         generarNuevaPob(recvMutacion,listadelosmejores10por)
-        if individuoConfit[0][1]<130:
+        if individuoConfit[0][1]<115:
             print("salí en: ",i,"\n")
             break
+        listaDeTodosLosMejoresFitness.append(str(individuoConfit[0][1]))
         loop.set_description("Generaciones: ".format(i))
         loop.update(1)
     loop.close()
-#----------------------------------------------------------------------------------------------------
+    print(listaDeTodosLosMejoresFitness)
+#-----------------------------------------------------------------------
+# -----------------------------
 #----------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------
 
